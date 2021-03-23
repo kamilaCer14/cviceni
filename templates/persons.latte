@@ -1,0 +1,26 @@
+{extends layout.latte}
+
+{block title}
+	Persons list
+{/block}
+
+
+{block body}
+	<table class="table table-hover table-striped">
+		<tr>
+			<th>First name</th>
+			<th>Last name</th>
+			<th>Nickname name</th>
+			<th>Height</th>
+		</tr>
+
+		{foreach $persons_list as $p}
+			<tr>
+				<td>{$p['first_name']}</td>
+				<td>{$p['last_name']}</td>
+				<td>{$p['nickname']}</td>
+				<td>{$p['height']}</td>
+			</tr>
+		{/foreach}
+	</table>
+{/block}
