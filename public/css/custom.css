@@ -1,3 +1,17 @@
 /*
   place custom CSS definitions into this file to override Bootstrap
 */
+
+body {
+	margin-top: 3%;	
+}
+
+nav {
+	float: left;
+	margin: 3%;
+}
+
+nav li {
+	list-style: none;
+	margin: 30%;
+}

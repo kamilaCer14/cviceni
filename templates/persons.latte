@@ -6,21 +6,36 @@
 
 
 {block body}
-	<table class="table table-hover table-striped">
-		<tr>
-			<th>First name</th>
-			<th>Last name</th>
-			<th>Nickname name</th>
-			<th>Height</th>
-		</tr>
+	<div class="container md-5">
 
-		{foreach $persons_list as $p}
+		<form method="get" action="{link search}">
+			<div  class="input-group mb-3">
+				<input type="terx" name="query" class="form-control" placeholder="Search for user">
+
+				<div class="input-group-append">
+					<button type="submit" class="btn btn-primary">Go</button>
+				</div>
+			</div>
+		</form>
+
+
+
+		<table class="table table-hover table-striped">
 			<tr>
-				<td>{$p['first_name']}</td>
-				<td>{$p['last_name']}</td>
-				<td>{$p['nickname']}</td>
-				<td>{$p['height']}</td>
+				<th>First name</th>
+				<th>Last name</th>
+				<th>Nickname name</th>
+				<th>Height</th>
 			</tr>
-		{/foreach}
-	</table>
+
+			{foreach $persons_list as $p}
+				<tr>
+					<td>{$p['first_name']}</td>
+					<td>{$p['last_name']}</td>
+					<td>{$p['nickname']}</td>
+					<td>{$p['height']}</td>
+				</tr>
+			{/foreach}
+		</table>
+	</div>
 {/block}
