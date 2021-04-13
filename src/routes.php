@@ -43,3 +43,51 @@ $app->get('/person/search', function(Request $request, Response $response, $args
        return $this->view->render($response, 'persons.latte', $tplVars);
     }
 })->setName('search');
+
+
+/* Nacitanie formularu pre novu osobu */
+$app->get('/person', function(Request $request, Response $response, $args) {
+  $tplVars['header'] = 'New person';
+  $tplVars['formData'] = [
+    'first_name' => '',
+    'last_name' => '',
+    'nickname' => '',
+    'gender' => '',
+    'height' => '',
+    'birth_day' => '',
+    'street_name' => '',
+    'street_number' => '',
+    'city' => '',
+    'zip' => ''
+  ];
+  return $this->view->render($response, 'person-form.latte', $tplVars);
+})->setName('newPerson');
+
+
+/* Post nova osoba */
+$app->post('/person', function(Request $request, Response $response, $args) {
+  $formData = $request->getParsedBody();
+  if ( empty($formData['first_name']) || empty($formData['last_name']) || empty($formData['nickname']) ) {
+    $tplVars['message'] = 'Please fill required fields';
+  } else {
+    try {
+      $stmt = $this->db->prepare('INSERT INTO person (first_name, last_name, nickname, gender, height, birth_day)
+                                              VALUES (:first_name, :last_name, :nickname, :gender, :height, :birth_day)');
+      $stmt->bindValue(':first_name', $formData['first_name']); // ;DROP DATABASE xvalovic; ===> `\;DROP DATABASE xvalovic`
+      $stmt->bindValue(':last_name', $formData['last_name']);
+      $stmt->bindValue(':nickname', $formData['nickname']);
+      $stmt->bindValue(':gender', empty($formData['gender']) ? null : $formData['gender']);
+      $stmt->bindValue(':height', empty($formData['height']) ? null : $formData['height']);
+      $stmt->bindValue(':birth_day', empty($formData['birth_day']) ? null : $formData['birth_day']);
+      $stmt->execute();
+    } catch (PDOexception $e) {
+      $tplVars['message'] = 'Error occured, sorry jako';
+      $tplVars['formData'] = $formData;
+      $this->logger->error($e->getMessage());
+    }
+  }
+  $tplVars['header'] = 'New person';
+  return $this->view->render($response, 'person-form.latte', $tplVars);
+});
+
+
