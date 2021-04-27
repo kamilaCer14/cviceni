@@ -23,8 +23,29 @@ $app->post('/test', function (Request $request, Response $response, $args) {
 
 /* Vypis osob */
 $app->get('/persons', function (Request $request, Response $response, $args) {
-	$stmt = $this->db->query('SELECT id_person, first_name, last_name, nickname, height FROM person ORDER BY first_name'); # databazovy objekt, cursor
-	$tplVars['persons_list'] = $stmt->fetchall(); # [ ['id_person' => 1, 'firs_name'=> 'johny'...], ['id_person' => 2... ]  ]
+  $params = $request->getQueryParams();
+  if (empty($params['limit'])) {
+    $params['limit'] = 10;
+  };
+
+  if (empty($params['page'])) {
+    $params['page'] = 0;
+  };
+
+  $stmt = $this->db->query('SELECT count(*) pocet FROM person');
+  $total_pages = $stmt->fetch()['pocet'] / $params['limit'];
+
+
+	$stmt = $this->db->prepare('SELECT id_person, first_name, last_name, nickname, height FROM person ORDER BY first_name LIMIT :limit OFFSET :offset'); # databazovy objekt, cursor
+  $stmt->bindValue(':limit', $params['limit']);
+  $stmt->bindValue(':offset', $params['page'] * $params['limit']);
+  $stmt->execute();
+	$tplVars = [
+    'persons_list' => $stmt->fetchall(),
+    'total_pages' => $total_pages,
+    'page' => $params['page'],
+    'limit' => $params['limit']
+  ]; # [ ['id_person' => 1, 'firs_name'=> 'johny'...], ['id_person' => 2... ]  ]
 	#echo var_dump($persons);
 	return $this->view->render($response, 'persons.latte', $tplVars);
 })->setName('persons');
@@ -101,7 +122,7 @@ $app->post('/person', function(Request $request, Response $response, $args) {
 
 
 /* UPDATE PERSSON form */
-$app->get('/person/{id_person}', function (Request $request, Response $response, $args) {
+$app->get('/person/{id_person}/edit', function (Request $request, Response $response, $args) {
   if (! empty($args['id_person'])) {
     $stmt = $this->db->prepare('SELECT * FROM person 
                                 LEFT JOIN location USING (id_location) 
@@ -120,7 +141,7 @@ $app->get('/person/{id_person}', function (Request $request, Response $response,
 
 
 /* UPDATE OSOBY */
-$app->post('/person/{id_person}', function (Request $request, Response $response, $args) {
+$app->post('/person/{id_person}/edit', function (Request $request, Response $response, $args) {
   $formData = $request->getParsedBody();
   $tplVars = [];
   if ( empty($formData['first_name']) || empty($formData['last_name']) || empty($formData['nickname']) ) {
@@ -171,3 +192,35 @@ $app->post('/person/{id_person}', function (Request $request, Response $response
   $tplVars['header'] = 'Edit person';
   return $this->view->render($response, 'person-form.latte', $tplVars);
 });
+
+
+/* DELETE OSOBY */
+$app->get('/person/{id_person}/delete', function (Request $request, Response $response, $args) {
+  if (!empty($args['id_person'])) {
+    try {
+      $stmt = $this->db->prepare('DELETE FROM contact WHERE id_person = :id_person');
+      $stmt->bindValue(':id_person', $args['id_person']);
+      $stmt->execute();
+
+      $stmt = $this->db->prepare('DELETE FROM person_meeting WHERE id_person = :id_person');
+      $stmt->bindValue(':id_person', $args['id_person']);
+      $stmt->execute();
+
+      $stmt = $this->db->prepare('DELETE FROM relation WHERE id_person1 = :id_person OR id_person2 = :id_person');
+      $stmt->bindValue(':id_person', $args['id_person']);
+      $stmt->bindValue(':id_person', $args['id_person']);
+      $stmt->execute();
+
+      $stmt = $this->db->prepare('DELETE FROM person WHERE id_person = :id_person');
+      $stmt->bindValue(':id_person', $args['id_person']);
+      $stmt->execute();
+
+    } catch (PDOexception $e) {
+      $this->logger->error($e->getMessage());
+    }
+  } else {
+    exit('id person is missing');
+  }
+
+  return $response->withHeader('Location', $this->router->pathFor('persons'));
+})->setName('deletePerson');

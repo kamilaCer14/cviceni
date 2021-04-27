@@ -28,7 +28,7 @@
 				<th>Last name</th>
 				<th>Nickname name</th>
 				<th>Height</th>
-				<th></th>
+				<th colspan="2"></th>
 			</tr>
 
 			{foreach $persons_list as $p}
@@ -44,8 +44,26 @@
 							</button>
 						</a>
 					</td>
+
+					<td>
+						<form onsubmit="return confirm('Are you sure?')" method="get" action="{link deletePerson, [id_person => $p['id_person']] }">
+							<button class="btn-sm btn-danger">Delete</button>
+						</form>
+					</td>
+
+
 				</tr>
 			{/foreach}
+		</table>
+
+		<table id="pagination">
+			<tr>
+				{for $i = 0; $i < $total_pages; $i ++}
+					<td>
+						<a href="{link persons}?page={$i}&limit={$limit}">{$i + 1}</a>
+					</td>
+				{/for}
+			</tr>
 		</table>
 	</div>
 {/block}
