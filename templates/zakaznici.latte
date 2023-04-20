@@ -1,0 +1,41 @@
+{extends layout.latte}
+{block title}
+Evidencia zákazníkov
+{/block}
+
+{block body}
+<div class="cover-container">
+    <div class="mybutton">
+        <a href="{link novyZakaznik}" class="btn btn-dark border-left">
+            <span class="fa fa-plus"></span> Pridať zakazníka do vernostného programu
+        </a>
+    </div>
+    <br>
+    <h1>{include title}</h1>
+    <br>
+
+    <div class="margin_table" style="overflow-x:auto">
+        <table class="table table-hover table-striped">
+            <tr>
+                <th>ID zákazníka</th>
+                <th>Meno</th>
+                <th>Priezvisko</th>
+                <th>Telefónne číslo</th>
+                <th>Email</th>
+            </tr>
+            {foreach $zakaznici_list as $z}
+            <tr>
+                <td >{$z['id_zak']}</td>
+                <td>{$z['meno']}</td>
+                <td>{$z['priezvisko']}</td>
+                <td>{$z['tel_cislo']}</td>
+                <td>{$z['email']}</td>
+            </tr>
+            {/foreach}
+        </table>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+    </div>
+</div>
+{/block}

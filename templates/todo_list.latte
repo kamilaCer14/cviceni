@@ -1,0 +1,74 @@
+{block todo_list}
+
+<div class="container-fluid" >
+    <div class="col-md-auto">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="text-center mb-4">Zoznam úloh</h1>
+                <form id="todo-form">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="todo-input" placeholder="Zadaj úlohu..." required>
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-dark">Pridaj</button>
+                        </div>
+                    </div>
+                </form>
+                <ul class="list-group" id="todo-list">
+                    <!-- Tasks will be dynamically added here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Retrieve tasks from localStorage
+    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    for (let i = 0; i < storedTasks.length; i++) {
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item';
+        listItem.innerHTML = `
+            ${ storedTasks[i]}
+            <button type="button" class="btn btn-danger btn-sm float-right delete-btn">Vymaž</button>
+        `;
+        document.getElementById('todo-list').appendChild(listItem);
+    }
+
+    // Add task to the list
+    document.getElementById('todo-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const taskInput = document.getElementById('todo-input');
+        const taskText = taskInput.value.trim();
+        if (taskText !== '') {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            listItem.innerHTML = `
+                    ${ taskText}
+                    <button type="button" class="btn btn-danger btn-sm float-right delete-btn">Delete</button>
+                `;
+            document.getElementById('todo-list').appendChild(listItem);
+            taskInput.value = '';
+
+            // Store tasks in localStorage
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.push(taskText);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+    });
+
+    // Delete task from the list
+    document.getElementById('todo-list').addEventListener('click', function (e) {
+        if (e.target.classList.contains('delete-btn')) {
+            e.target.parentElement.remove();
+
+            // Remove task from localStorage
+            const taskText = e.target.parentElement.textContent.trim();
+            const tasks = JSON.parse(localStorage.getItem('tasks'));
+            const index = tasks.indexOf(taskText);
+            tasks.splice(index, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+    });
+</script>
+
+{/block}

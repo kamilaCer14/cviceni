@@ -1,0 +1,47 @@
+{extends layout.latte}
+{block title}
+{$header}
+{/block}
+
+{block body}
+<h1>{$header}</h1>
+<div class="cover-container">
+    <div class="margin_table" style="overflow-x:auto">
+        <table class="table table-hover table-striped">
+    <tr>
+        <th>Číslo artikla</th>
+        <th>Názov</th>
+        <th>Sezóna</th>
+        <th>Pohlavie</th>
+        <th>Druh</th>
+        <th>Farba</th>
+        <th>Stav</th>
+        <th>Značka</th>
+        <th>Dodávateľ</th>
+        <th>Nakupná cena</th>
+        <th>Predajná cena</th>
+        <th>EAN</th>
+    </tr>
+            {foreach $produkty as $produkt}
+            <tr>
+                <td>{$produkt['cislo_artikla']}</td>
+                <td>{$produkt['nazov']}</td>
+                <td>{$produkt['sezona']}</td>
+                <td>{$produkt['pohlavie']}</td>
+                <td>{$produkt['druh']}</td>
+                <td>{$produkt['farba']}</td>
+                <td>{$produkt['stav']}</td>
+                <td>{$produkt['znacka']}</td>
+                <td>{$produkt['dodavatel']}</td>
+                <td>{$produkt['nakupna_cena']}</td>
+                <td>{$produkt['predajna_cena']}</td>
+                <td>{$produkt['ean']}</td>
+            </tr>
+            {/foreach}
+</table>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+</div>
+</div>
+{/block}

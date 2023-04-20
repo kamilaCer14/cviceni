@@ -1,0 +1,47 @@
+{extends layout.latte}
+
+{block title} {$header} {/block}
+
+
+{block body}
+<div class="container-fluid">
+    <h1>{$header}</h1>
+    <!-- Sem vypiseme pripadnu hlasku -->
+    {if isset($message)}
+    <p>{$message}</p>
+    {/if}
+    <form method="post">
+        <div class="form-row">
+            <!-- Meno -->
+            <div class="col-sm-5 form-group">
+                <label>Meno</label>
+                <input class="form-control" type="text" name="meno" placeholder="Meno" required value="{$formData['meno']}">
+            </div>
+            <!-- Priezvisko -->
+            <div class="col-sm-5 form-group">
+                <label>Priezvisko</label>
+                <input class="form-control" type="text" name="priezvisko" placeholder="Priezvisko" required value="{$formData['priezvisko']}">
+            </div>
+            <!-- Tel číslo -->
+            <div class="col-sm-5 form-group">
+                <label>Telefónne číslo</label>
+                <input class="form-control" type="text" name="tel_cislo" placeholder="Telefónne číslo" required value="{$formData['tel_cislo']}">
+            </div>
+            <!-- Email -->
+            <div class="col-sm-5 form-group">
+                <label>Email</label>
+                <input class="form-control" type="text" name="email" placeholder="Email" required value="{$formData['email']}">
+            </div>
+        </div>
+
+        <br>
+
+        <button type="submit" class="btn btn-success">
+            <span class="fa fa-plus"></span> Submit
+        </button>
+    </form>
+    <a href="javascript:history.back()" class="btn btn-secondary">
+        <i class="fas fa-arrow-left mr-2"></i> Back
+    </a>
+</div>
+{/block}

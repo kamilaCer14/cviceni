@@ -1,0 +1,106 @@
+{extends layout.latte}
+
+{block title} {$header} {/block}
+
+
+{block body}
+<div class="container-fluid">
+   <h1>{$header}</h1>  
+
+   <!-- Sem vypiseme pripadnu hlasku -->
+   {if isset($message)}
+   <p>{$message}</p>
+   {/if}
+   <form method="post">
+      <div class="form-row">
+         <!-- Názov -->
+         <div class="col-sm-3 form-group">
+            <label>Názov</label>
+            <input class="form-control" type="text" name="nazov" placeholder="Názov" required value="{$formData['nazov']}">
+         </div>
+         <!-- Sezóna -->
+         <div class="col-sm-3 form-group">
+            <label>Sezóna</label>
+            <input class="form-control" type="text" name="sezona" placeholder="Sezóna" required value="{$formData['sezona']}">
+         </div>
+         <!-- Pohlavie -->
+         <div class="col-sm-3 form-group">
+            <label>Pohlavie</label>
+            <select class="form-control" type="text" name="pohlavie"required>
+               <option value="pánsky" {if $formData['pohlavie'] == 'male'}selected{/if}>pánsky</option>
+               <option value="dámsky" {if $formData['pohlavie'] == 'female'}selected{/if}>dámsky</option>
+            </select>
+         </div>
+      </div>
+
+      <div class="form-row">
+            <!-- Druh -->
+            <div class="col-sm-3 form-group">
+               <label>Druh</label>
+               <input class="form-control" type="text" name="druh" placeholder="Druh" required value="{$formData['druh']}">
+            </div>
+            <!-- Farba -->
+            <div class="col-sm-3 form-group">
+               <label>Farba</label>
+               <input class="form-control" type="text" name="farba" placeholder="Farba" required value="{$formData['farba']}">
+            </div>
+            <!-- Stav -->
+            <div class="col-sm-3 form-group">
+               <label>Stav</label>
+               <input class="form-control" type="number" name="stav" placeholder="Stav" required value="{$formData['stav']}">
+            </div>
+      </div>
+         <div class="form-row">
+            <!-- Značka -->
+            <div class="col-sm-3 form-group">
+               <label>Značka</label>
+               <input class="form-control" type="text" name="znacka" placeholder="Značka" required value="{$formData['znacka']}">
+            </div>
+            <!-- Dodavatel -->
+            <div class="col-sm-3 form-group">
+               <label for="dodavateliaid_dod">Názov dodávateľa</label>
+               <select name="dodavateliaid_dod" id="dodavateliaid_dod" class="form-control">
+                  <option value="disabled selected">Vyberte dodávateľa</option>
+                  {foreach $dodavatelia_list as $d}
+                  <option value="{$d['id_dod']}">{$d['nazov']}</option>
+                  {/foreach}
+               </select>
+            </div>
+            <!-- Predajná cena -->
+            <div class="col-sm-3 form-group">
+               <label>Predajná cena</label>
+               <input class="form-control" type="number" name="predajna_cena" placeholder="Predajná cena" required value="{$formData['predajna_cena']}">
+            </div>
+         </div>
+      <div class="form-row">
+         <!-- Nákupná cena -->
+         <div class="col-sm-3 form-group">
+            <label>Nákupná cena</label>
+            <input class="form-control" type="number" name="nakupna_cena" placeholder="Nákupná cena" required value="{$formData['nakupna_cena']}">
+         </div>
+         <!-- EAN -->
+         <div class="col-sm-3 form-group">
+            <label>EAN</label>
+            <input class="form-control" type="number" name="ean" placeholder="EAN" required value="{$formData['ean']}">
+         </div>
+         <div class="col-sm-3 form-group">
+         <label>Predajňa</label>
+         <select class="form-control" type="text" name="predajnecislo_predajne"required>
+            <option value="1" {if $formData['predajnecislo_predajne'] == '1'}selected{/if}>1</option>
+            <option value="2" {if $formData['predajnecislo_predajne'] == '2'}selected{/if}>2</option>
+            <option value="3" {if $formData['predajnecislo_predajne'] == '3'}selected{/if}>3</option>
+         </select>
+         </div>
+      </div>
+
+      <br>
+      
+      <button type="submit" class="btn btn-success">
+         <span class="fa fa-plus"></span> Submit
+      </button>
+   </form>
+   <a href="javascript:history.back()" class="btn btn-secondary">
+      <i class="fas fa-arrow-left mr-2"></i> Back
+   </a>
+</div>
+{/block}

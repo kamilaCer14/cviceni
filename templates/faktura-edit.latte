@@ -1,0 +1,82 @@
+{extends layout.latte}
+
+{block title} {$header} {/block}
+
+{block body}
+<div class="container-fluid">
+    <h1>{$header}</h1>
+
+    <!-- Sem vypiseme pripadnu hlasku -->
+    {if isset($message)}
+    <p>{$message}</p>
+    {/if}
+    <form method="post">
+        <div class="form-row">
+            <!-- Číslo faktúry -->
+            <div class="col-sm-3 form-group">
+                <label>Číslo faktúry</label>
+                <input class="form-control" type="number" name="cislo_fakt" placeholder="Číslo faktúry" required value="{$formData['cislo_fakt']}">
+            </div>
+            <!-- Názov faktúry -->
+            <div class="col-sm-3 form-group">
+                <label>Názov faktúry</label>
+                <input class="form-control" type="text" name="nazov_fakt" placeholder="Názov faktúry" required value="{$formData['nazov_fakt']}">
+            </div>
+            <!-- Dátum splatnosti -->
+            <div class="col-sm-3 form-group">
+                <label>Dátum splatnosti</label>
+                <input class="form-control" type="date" name="datum_splatnosti" placeholder="Dátum splatnosti" required value="{$formData['datum_splatnosti']}">
+            </div>
+        </div>
+        <div class="form-row">
+            <!-- Dátum evidencie -->
+            <div class="col-sm-3 form-group">
+                <label>Dátum evidencie</label>
+                <input class="form-control" type="date" name="datum_evidencie" placeholder="Dátum evidencie" required value="{$formData['datum_evidencie']}">
+            </div>
+            <!-- Suma -->
+            <div class="col-sm-3 form-group">
+                <label>Suma</label>
+                <input class="form-control" type="number" step="0.01" name="suma" placeholder="Suma" required value="{$formData['suma']}">
+            </div>
+            <!-- Vyplatené -->
+            <div class="col-sm-3 form-group">
+                <label>Vyplatené</label>
+                <input class="form-control" type="number" step="0.01" name="vyplatene" placeholder="Vyplatené" required value="{$formData['vyplatene']}">
+            </div>
+        </div>
+        <div class="form-row">
+            <!-- Dátum dodania -->
+            <div class="col-sm-3 form-group">
+                <label>Dátum dodania</label>
+                <input class="form-control" type="date" name="datum_dodania" placeholder="Dátum dodania" required value="{$formData['datum_dodania']}">
+            </div>
+            <!-- Poznamka-->
+            <div class="col-sm-3 form-group">
+                <label>Poznámka</label>
+                <input class="form-control" type="text" name="poznamka" placeholder="Poznámka" required value="{$formData['poznamka']}">
+            </div>
+            <!-- Názov Dodávateľa -->
+            <div class="col-sm-3 form-group">
+                <label for="dodavateliaid_dod">Názov dodávateľa</label>
+                <select name="dodavateliaid_dod" id="dodavateliaid_dod" class="form-control">
+                    <option value="disabled selected">Vyberte dodávateľa</option>
+                    {foreach $dodavatelia_list as $d}
+                    <option value="{$d['id_dod']}">{$d['nazov']}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <br>
+
+        <button type="submit" class="btn btn-success">
+            <span class="fa fa-plus"></span> Submit
+        </button>
+    </form>
+
+    <a href="javascript:history.back()" class="btn btn-secondary">
+        <i class="fas fa-arrow-left mr-2"></i> Back
+    </a>
+</div>
+
+{/block}

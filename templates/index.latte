@@ -1,18 +1,29 @@
 {extends layout.latte}
 
-{block title}TITLE OF PAGE{/block}
+{block title}HOME{/block}
 
 {block body}
-    <div class="container">
-        <h1>BODY CONTENT</h1>
+      <main>
+       <div class="h-10 d-flex align-items-center justify-content-center flex-md-column">
+            <h1 id="nadpis">Informačný systém VALENTÍN</h1>
+           <br>
+              <div class="lead">
+             {if !empty($_COOKIE['token'])}
+                  <p class="text-center">VITAJ, SI PRIHLÁSENÝ!</p>
+                    {include todo_list}
+                {else}
+              </div>
 
-        <form action="{link redir}" method="post">
-            <label>Type your name:</label>
-            <input class="form-control" type="text" name="person" />
-            <br />
-            <button type="submit" class="btn btn-primary">
-                <span class="fa fa-check"></span> OK
-            </button>
-        </form>
-    </div>
+            <div>
+                <li><a class="btn btn-lg btn-secondary" href="{link login}"><span class="fa fa-user-lock"></span> Prihlásiť sa</a></li>
+                <br>
+                <li><a class="btn btn-lg btn-secondary" href="{link register}"><span class="fa fa-user-lock"></span> Registrovať</a></li>
+                {/if}
+            </div>
+       </div>
+          <nav class="navbar fixed-bottom">
+              Made by Kamila Červáková.
+          </nav>
+      </main>
 {/block}
+

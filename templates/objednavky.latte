@@ -1,0 +1,74 @@
+{extends layout.latte}
+
+{block title}
+Evidencia objednávok
+{/block}
+
+{block body}
+<div class="cover-container">
+   <div id="button">
+        <div class="mybutton">
+            <a href="{link novaObjednavka}" class="btn btn-dark border-left">
+                <span class="fa fa-plus"></span> Pridať objednávku
+            </a>
+        </div>
+        <div class="mybutton">
+            <a href="{link nezaplateneObjednavky}" class="btn btn-dark border-left">
+                <span class=""></span> Nezaplatené objednávky
+            </a>
+        </div>
+   </div>
+    <h1>{include title}</h1>
+    <br>
+
+    <div class="margin_table" style="overflow-x:auto">
+        <table class="table table-hover table-striped">
+            <tr>
+                <th>Číslo objednávky</th>
+                <th>Počet kusov</th>
+                <th>Počet artiklov</th>
+                <th>Suma</th>
+                <th>Dátum vystavenia</th>
+                <th>Popis</th>
+                <th>Zaplatené</th>
+                <th>Prijaté</th>
+                <th>Názov dodávateľa</th>
+                <th>Zoznam produktov</th>
+            </tr>
+            {foreach $objednavky_list as $o}
+            <tr>
+                <td>{$o['cislo_id']}</td>
+                <td>{$o['pocet_kusov']}</td>
+                <td>{$o['pocet_artiklov']}</td>
+                <td>{$o['suma']}</td>
+                <td>{$o['datum_vystavenia']}</td>
+                <td>{$o['popis']}</td>
+                <td>{if $o['zaplatene']}<i class="fas fa-check"></i>{else}<i class="fas fa-times"></i>{/if}</td>
+                <td>{if $o['prijate']}<i class="fas fa-check"></i>{else}<i class="fas fa-times"></i>{/if}</td>
+                <td>{$o['dodavatelianazov_dod']}</td>
+
+                <td class="text-center">
+                    <a href="{link 'priradenieProduktov', ['cislo_id' => $o['cislo_id']]}">
+                        <button class="btn-sm btn-outline-dark" style="width: 40px">
+                            <span class="fa fa-list"></span>
+                        </button>
+                    </a>
+                </td>
+
+                <td class="text-center">
+                    {if !$o['zaplatene']}
+                        <button class="btn-sm btn-outline-dark" style="...">
+                            Zaplať
+                        </button>
+                    {/if}
+                </td>
+
+            </tr>
+            {/foreach}
+        </table>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+    </div>
+</div>
+{/block}

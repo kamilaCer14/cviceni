@@ -1,0 +1,81 @@
+{extends layout.latte}
+
+{block title} {$header} {/block}
+
+{block body}
+<div class="container-fluid">
+    <h1>{$header}</h1>
+    <!-- Sem vypiseme pripadnu hlasku -->
+    {if isset($message)}
+    <p>{$message}</p>
+    {/if}
+    <form method="post">
+        <div class="form-row">
+            <!-- Pocet kusov -->
+            <div class="col-sm-4 form-group">
+                <label>Počet kusov</label>
+                <input class="form-control" type="number" name="pocet_kusov" placeholder="Počet kusov" required value="{$formData['pocet_kusov']}">
+            </div>
+            <!-- Pocet artiklov -->
+            <div class="col-sm-4 form-group">
+                <label>Počet artiklov</label>
+                <input class="form-control" type="number" name="pocet_artiklov" placeholder="Počet artiklov" required value="{$formData['pocet_artiklov']}">
+            </div>
+        </div>
+            <div class="form-row">
+                <!-- Suma -->
+                <div class="col-sm-4 form-group">
+                    <label>Suma</label>
+                    <input class="form-control" type="number" name="suma" placeholder="Suma" required value="{$formData['suma']}">
+                </div>
+                <!-- Dátum vystavenia -->
+                <div class="col-sm-4 form-group">
+                    <label>Dátum vystavenia</label>
+                    <input class="form-control" type="date" name="datum_vystavenia" placeholder="Dátum vystavenia" required value="{$formData['datum_vystavenia']}">
+                </div>
+            </div>
+            <div class="form-row">
+                <!-- Popis -->
+                <div class="col-sm-4 form-group">
+                    <label>Popis</label>
+                    <input class="form-control" type="text" name="popis" placeholder="Popis" value="{$formData['popis']}">
+                </div>
+                <!-- Zaplatene -->
+                <div class="col-sm-1 form-group">
+                    <label>Zaplatené</label>
+                    <select class="form-control" name="zaplatene">
+                        <option value="1" {if $formData['zaplatene'] == 1}selected{/if}>Áno</option>
+                        <option value="0" {if $formData['zaplatene'] == 0}selected{/if}>Nie</option>
+                    </select>
+                </div>
+                <!-- Prijate -->
+                <div class="col-sm-1 form-group">
+                    <label>Prijaté</label>
+                    <select class="form-control" name="prijate">
+                        <option value="1" {if $formData['prijate'] == 1}selected{/if}>Áno</option>
+                        <option value="0" {if $formData['prijate'] == 0}selected{/if}>Nie</option>
+                    </select>
+                </div>
+                <!-- Dodavatel -->
+                <div class="col-sm-2 form-group">
+                    <label for="dodavatelianazov_dod">Názov dodávateľa</label>
+                    <select name="dodavatelianazov_dod" id="dodavatelianazov_dod" class="form-control">
+                        <option value="disabled selected">Vyberte dodávateľa</option>
+                        {foreach $dodavatelia_list as $d}
+                        <option value="{$d['id_dod']}">{$d['nazov']}</option>
+                        {/foreach}
+                    </select>
+                </div>
+
+            </div>
+        <br>
+
+        <button type="submit" class="btn btn-success">
+            <span class="fa fa-plus"></span> Submit
+        </button>
+    </form>
+    <a href="javascript:history.back()" class="btn btn-secondary">
+        <i class="fas fa-arrow-left mr-2"></i> Back
+    </a>
+</div>
+{/block}

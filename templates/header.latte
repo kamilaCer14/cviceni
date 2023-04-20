@@ -1,0 +1,27 @@
+{block header}
+
+
+<nav class="navbar navbar-expand-md navbar-light bg-gray">
+    <a class="navbar-brand" href="{link index}">
+        <img src="{$basePath}/img/valentin.png" alt="Logo" class="valentin">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{link logout}">
+                    <i class="fas fa-sign-out-alt fa-2x"></i>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-user-circle fa-2x"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+{/block header}

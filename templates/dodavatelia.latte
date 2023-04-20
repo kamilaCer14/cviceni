@@ -1,0 +1,44 @@
+{extends layout.latte}
+{block title}
+Evidencia dodávateľov
+{/block}
+
+{block body}
+<div class="cover-container">
+    <br>
+    <h1>{include title}</h1>
+    <br>
+
+    <div class="margin_table" style="overflow-x:auto">
+        <table class="table table-hover table-striped">
+            <tr>
+                <th>ID dodávateľa</th>
+                <th>Názov</th>
+                <th>IČO</th>
+                <th>Kontakt</th>
+                <th>Zoznam faktúr</th>
+            </tr>
+            {foreach $dodavatelia_list as $d}
+            <tr>
+                <td>{$d['id_dod']}</td>
+                <td>{$d['nazov']}</td>
+                <td>{$d['ico']}</td>
+                <td>{$d['kontakt']}</td>
+
+                <td class="text-center">
+                    <a href="{link 'priradFaktury', ['nazov' => $d['nazov']]}">
+                        <button class="btn-sm btn-outline-dark" style="width: 40px">
+                            <span class="fa fa-list"></span>
+                        </button>
+                    </a>
+                </td>
+
+            </tr>
+            {/foreach}
+        </table>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+    </div>
+</div>
+{/block}

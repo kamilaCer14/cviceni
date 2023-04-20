@@ -1,0 +1,43 @@
+{extends layout.latte}
+{block title}
+Evidencia predajní
+{/block}
+
+{block body}
+<div class="cover-container">
+    <br>
+    <h1>{include title}</h1>
+    <br>
+    <div class="margin_table" style="overflow-x:auto">
+        <table class="table table-hover table-striped">
+            <tr>
+                <th>Číslo predajne</th>
+                <th>Názov</th>
+                <th>Zamestnanci</th> <!-- Add a new column for displaying zamestnanci -->
+                <th>Zoznam produktov</th>
+            </tr>
+            {foreach $predajne_list as $p}
+            <tr>
+                <td>{$p['cislo_predajne']}</td>
+                <td>{$p['nazov']}</td>
+                <td>{$p['zamestnanci']}</td> <!-- Display the concatenated zamestnanci values -->
+
+
+                <td class="text-center">
+                    <a href="{link 'priradProdukty', ['cislo_predajne' => $p['cislo_predajne']]}">
+                        <button class="btn-sm btn-outline-dark" style="width: 40px">
+                            <span class="fa fa-list"></span>
+                        </button>
+                    </a>
+                </td>
+
+            </tr>
+            {/foreach}
+        </table>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+    </div>
+</div>
+
+{/block}

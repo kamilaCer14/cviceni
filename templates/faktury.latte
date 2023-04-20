@@ -1,0 +1,64 @@
+{extends layout.latte}
+
+{block title}
+Evidencia faktúr
+{/block}
+
+{block body}
+<div class="cover-container">
+    <div class="mybutton">
+        <a href="{link novaFaktura}" class="btn btn-dark">
+            <span class="fa fa-plus"></span> Pridať faktúru
+        </a>
+    </div>
+    <br>
+    <h1>{include title}</h1>
+    <br>
+
+    <div class="margin_table" style="overflow-x:auto">
+        <table class="table table-hover table-striped">
+            <tr>
+                <th>Číslo faktúry</th>
+                <th>Názov</th>
+                <th>Dátum splatnosti</th>
+                <th>Dátum evidencie</th>
+                <th>Suma</th>
+                <th>Suma bez DPH</th>
+                <th>DPH</th>
+                <th>Vyplatené</th>
+                <th>Rozdiel</th>
+                <th>Dátum dodania</th>
+                <th>Poznámka</th>
+                <th>Názov dodávateľa</th>
+            </tr>
+            {foreach $faktury_list as $f}
+            <tr>
+                <td>{$f['cislo_fakt']}</td>
+                <td>{$f['nazov_fakt']}</td>
+                <td>{$f['datum_splatnosti']}</td>
+                <td>{$f['datum_evidencie']}</td>
+                <td>{$f['suma']}</td>
+                <td>{$f['bez_dph']}</td>
+                <td>{$f['dph']}</td>
+                <td>{$f['vyplatene']}</td>
+                <td>{$f['rozdiel']}</td>
+                <td>{$f['datum_dodania']}</td>
+                <td>{$f['poznamka']}</td>
+                <td>{$f['nazov']}</td>
+
+                <td class="text-center">
+                    <a href="{link 'updateFaktura', ['cislo_fakt' => $f['cislo_fakt']]}">
+                        <button class="btn-sm btn-outline-dark" style="width: 80px">
+                            <span class="fa fa-edit"></span> Edit
+                        </button>
+                    </a>
+                </td>
+            </tr>
+            {/foreach}
+        </table>
+        <a href="javascript:history.back()" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+    </div>
+</div>
+{/block}

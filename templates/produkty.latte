@@ -1,0 +1,124 @@
+{extends layout.latte}
+{block title}
+Evidencia produktov
+{/block}
+
+{block body}
+<div class="cover-container">
+    <div id="search">
+        <form action="{link search}" method="get">
+            <label>Search:</label>
+            <input type="text" name="q" class="form-control">
+            <br>
+            <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-search mr-1"></i>
+                Search
+            </button>
+        </form>
+    </div>
+
+    <div class="mybutton">
+        <a href="{link novyProdukt}" class="btn btn-dark border-left">
+            <span class="fa fa-plus"></span> Pridať nový produkt
+        </a>
+    </div>
+
+    <br>
+    <h1>{include title}</h1>
+    <br>
+    <div class="margin_table" style="overflow-x:auto">
+    <table class="table table-hover table-striped">
+        <tr>
+            <th>Číslo artikla</th>
+            <th>Názov</th>
+            <th>Sezóna</th>
+            <th>Pohlavie</th>
+            <th>Druh</th>
+            <th>Farba</th>
+            <th>Stav</th>
+            <th>Značka</th>
+            <th>Dodavateľ</th>
+            <th>Predajná cena</th>
+            <th>Nákupná cena</th>
+            <th>EAN</th>
+            <th>Predajňa</th>
+        </tr>
+        {foreach $produkty_list as $p}
+        <tr>
+            <td>{$p['cislo_artikla']}</td>
+            <td>{$p['nazov']}</td>
+            <td>{$p['sezona']}</td>
+            <td>{$p['pohlavie']}</td>
+            <td>{$p['druh']}</td>
+            <td>{$p['farba']}</td>
+            <td>{$p['stav']}</td>
+            <td>{$p['znacka']}</td>
+            <td>{$p['dodavatel']}</td>
+            <td>{$p['predajna_cena']}</td>
+            <td>{$p['nakupna_cena']}</td>
+            <td>{$p['ean']}</td>
+            <td>{$p['predajnecislo_predajne']}</td>
+
+            <!--
+            <td class="text-center">
+                <a href="{link predajne}?id_person={$p['id_person']}">
+                    <button class="btn-sm" style="width: 100px" >
+                        <span class="fa fa-phone"></span> Contact
+                    </button>
+                </a>
+            </td>
+            -->
+
+            <td class="text-center">
+                <a href="{link 'updateProdukt', ['cislo_artikla' => $p['cislo_artikla']]}">
+                    <button class="btn-sm btn-outline-dark" style="width: 80px">
+                        <span class="fa fa-edit"></span> Edit
+                    </button>
+                </a>
+            </td>
+
+            </td>
+            <td class="text-center">
+                <form method="get" onsubmit="return confirmDelete('{$p['cislo_artikla']} ' + '{$p['nazov']}')" action="{link deleteProdukt, ['cislo_artikla' => $p['cislo_artikla']]}">
+                    <button class="btn-sm btn-outline-danger" style="width: 80px">
+                        <span class="fa fa-trash"></span> Delete
+                    </button>
+                </form>
+            </td>
+
+
+        </tr>
+        {/foreach}
+    </table>
+    </div>
+
+    <!-- Strankovanie -->
+    <div class="pagination-container">
+        <ul class="pagination">
+            {for $i = 0; $i < $total_pages; $i++}
+            <li class="page-item {if $i == $page}active{/if}">
+                {if $i == $page}
+                <span class="page-link">{$i + 1}</span>
+                {else}
+                <a class="page-link" href="{link produkty}?page={$i}&limit={$limit}">{$i + 1}</a>
+                {/if}
+            </li>
+            {/for}
+        </ul>
+    </div>
+
+    <a href="javascript:history.back()" class="btn btn-secondary">
+        <i class="fas fa-arrow-left mr-2"></i> Back
+    </a>
+
+</div>
+
+<script type="text/javascript">
+    function confirmDelete(name) {
+        return confirm('Do you really want to delete ' + name + '?');
+    }
+</script>
+
+
+
+{/block}
