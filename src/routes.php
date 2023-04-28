@@ -220,6 +220,10 @@ $app->group('/auth', function() use($app) {
         $dodavatelia_list = $stmt->fetchAll();
         $tplVars['dodavatelia_list'] = $dodavatelia_list;
 
+        $stmt = $this->db->query('SELECT o.cislo_id FROM objednavky o');
+        $objednavky_list = $stmt->fetchAll();
+        $tplVars['objednavky_list'] = $objednavky_list;
+
         return $this->view->render($response, 'produkt-formular.latte', $tplVars);
     })->setName('novyProdukt');
 
@@ -231,23 +235,18 @@ $app->group('/auth', function() use($app) {
             empty($formData['pohlavie']) || empty($formData['druh']) || empty($formData['farba']) ||
             empty($formData['stav']) || empty($formData['znacka'])  ||
             empty($formData['dodavatel']) || empty($formData['predajna_cena']) ||
-            empty($formData['nakupna_cena']) || empty($formData['ean']) || empty($formData['predajnecislo_predajne'])) {
+            empty($formData['nakupna_cena']) || empty($formData['ean']) || empty($formData['predajnecislo_predajne']) ||
+            empty($formData['objednavkycislo_obj'])) {
             $tplVars['message'] = 'Please fill required fields';
         } else {
             try {
                 $this->db->beginTransaction();
 
-                // Fetch last used cislo_artikla value
-                $stmt = $this->db->query('SELECT MAX(cislo_artikla) as max_cislo FROM produkty');
-                $result = $stmt->fetch();
-                $lastId = $result['max_cislo'];
-                $newId = $lastId + 1;
 
-                $stmt = $this->db->prepare('INSERT INTO produkty (cislo_artikla, nazov, sezona, pohlavie, druh, farba, stav,
-                                                                znacka, dodavatel, nakupna_cena, predajna_cena, ean, predajnecislo_predajne)
-                                              VALUES (:cislo_artikla, :nazov, :sezona, :pohlavie, :druh, :farba, :stav,
-                                                      :znacka, :dodavatel, :nakupna_cena, :predajna_cena, :ean, :predajna)');
-                $stmt->bindValue(':cislo_artikla', $newId);
+                $stmt = $this->db->prepare('INSERT INTO produkty (nazov, sezona, pohlavie, druh, farba, stav,
+                                                                znacka, dodavatel, nakupna_cena, predajna_cena, ean, predajnecislo_predajne, objednavkycislo_obj)
+                                              VALUES (:nazov, :sezona, :pohlavie, :druh, :farba, :stav,
+                                                      :znacka, :dodavatel, :nakupna_cena, :predajna_cena, :ean, :predajna, :objednavka)');
                 $stmt->bindValue(':nazov', $formData['nazov']);
                 $stmt->bindValue(':sezona', $formData['sezona']);
                 $stmt->bindValue(':pohlavie', empty($formData['pohlavie']) ? null : $formData['pohlavie']);
@@ -260,6 +259,7 @@ $app->group('/auth', function() use($app) {
                 $stmt->bindValue(':predajna_cena', $formData['predajna_cena']);
                 $stmt->bindValue(':ean', $formData['ean']);
                 $stmt->bindValue(':predajna', $formData['predajnecislo_predajne']);
+                $stmt->bindValue(':objednavka', $formData['objednavkycislo_obj']);
 
                 $stmt->execute();
                 $this->db->commit();
@@ -268,6 +268,7 @@ $app->group('/auth', function() use($app) {
             } catch (PDOexception $e) {
                 $tplVars['message'] = 'Error occured :(';
                 $tplVars['formData'] = $formData;
+                echo var_dump($e->getMessage());
                 $this->logger->error($e->getMessage());
                 $this->db->rollback();
             }
@@ -289,12 +290,16 @@ $app->group('/auth', function() use($app) {
                 exit('produkt sa nenašiel');
             } else {
                 $tplVars['header'] = 'Edit produktu';
+                $stmt = $this->db->query('SELECT d.id_dod, d.nazov FROM dodavatelia d ORDER BY nazov ASC');
+                $dodavatelia_list = $stmt->fetchAll();
+                $tplVars['dodavatelia_list'] = $dodavatelia_list;
+
+                $stmt = $this->db->query('SELECT o.cislo_id FROM objednavky o');
+                $objednavky_list = $stmt->fetchAll();
+                $tplVars['objednavky_list'] = $objednavky_list;
                 return $this->view->render($response, 'produkt-formular.latte', $tplVars);
             }
         }
-        $stmt = $this->db->query('SELECT d.id_dod, d.nazov FROM dodavatelia d ORDER BY nazov ASC');
-        $dodavatelia_list = $stmt->fetchAll();
-        $tplVars['dodavatelia_list'] = $dodavatelia_list;
 
     })->setName('updateProdukt');
 
@@ -307,7 +312,8 @@ $app->group('/auth', function() use($app) {
             empty($formData['pohlavie']) || empty($formData['druh']) || empty($formData['farba']) ||
             empty($formData['stav']) || empty($formData['znacka']) ||
             empty($formData['dodavatel']) || empty($formData['predajna_cena']) ||
-            empty($formData['nakupna_cena']) || empty($formData['ean']) || empty($formData['predajnecislo_predajne'])){
+            empty($formData['nakupna_cena']) || empty($formData['ean']) || empty($formData['predajnecislo_predajne']) ||
+            empty($formData['objednavkycislo_obj'])){
             $tplVars['message'] = 'Please fill required fields';
         }
         try {
@@ -324,7 +330,9 @@ $app->group('/auth', function() use($app) {
                         predajna_cena = :predajna_cena,
                         nakupna_cena = :nakupna_cena,
                         ean = :ean,
-                        predajnecislo_predajne = :predajna
+                        predajnecislo_predajne = :predajna,
+                        objednavkycislo_obj = :objednavka
+                    
                     WHERE cislo_artikla = :cislo_artikla");
             $stmt->bindValue(':cislo_artikla', $args['cislo_artikla']);
             $stmt->bindValue(':nazov', $formData['nazov']);
@@ -339,6 +347,7 @@ $app->group('/auth', function() use($app) {
             $stmt->bindValue(':predajna_cena', $formData['predajna_cena']);
             $stmt->bindValue(':ean', $formData['ean']);
             $stmt->bindValue(':predajna', $formData['predajnecislo_predajne']);
+            $stmt->bindValue(':objednavka', $formData['objednavkycislo_obj']);
             $stmt->execute();
             $tplVars['message'] = 'Produkt úspešne upravený!';
 
@@ -474,15 +483,8 @@ $app->get('/zakaznici', function (Request $request, Response $response, $args) {
             try {
                 $this->db->beginTransaction();
 
-                // Fetch last used id_zak value
-                $stmt = $this->db->query('SELECT MAX(id_zak) as max_id FROM zakaznici');
-                $result = $stmt->fetch();
-                $lastId = $result['max_id'];
-                $newId = $lastId + 1;
-
-                $stmt = $this->db->prepare('INSERT INTO zakaznici (id_zak, meno, priezvisko, tel_cislo, email)
-                                              VALUES (:id_zak, :meno, :priezvisko, :tel_cislo, :email)');
-                $stmt->bindValue(':id_zak', $newId);
+                $stmt = $this->db->prepare('INSERT INTO zakaznici (meno, priezvisko, tel_cislo, email)
+                                              VALUES (:meno, :priezvisko, :tel_cislo, :email)');
                 $stmt->bindValue(':meno', $formData['meno']);
                 $stmt->bindValue(':priezvisko', $formData['priezvisko']);
                 $stmt->bindValue(':tel_cislo', $formData['tel_cislo']);
@@ -506,7 +508,7 @@ $app->get('/zakaznici', function (Request $request, Response $response, $args) {
     $app->get('/faktury', function (Request $request, Response $response, $args) {
         $stmt = $this->db->prepare('SELECT faktury.*, dodavatelia.nazov 
                                 FROM faktury 
-                                LEFT JOIN dodavatelia ON faktury.dodavateliaid_dod = id_dod');
+                                LEFT JOIN dodavatelia ON faktury.dodavateliaid_dod = id_dod ORDER BY cislo_fakt');
         $stmt->execute();
         $tplVars['faktury_list'] = $stmt->fetchAll();
         return $this->view->render($response, 'faktury.latte', $tplVars);
@@ -520,6 +522,9 @@ $app->get('/zakaznici', function (Request $request, Response $response, $args) {
             'datum_splatnosti' => '',
             'datum_evidencie' => '',
             'suma' => '',
+            'bez_dph' => '',
+            'dph' => '',
+            'rozdiel' => '',
             'vyplatene' => '',
             'datum_dodania' => '',
             'poznamka' => '',
@@ -550,18 +555,13 @@ $app->get('/zakaznici', function (Request $request, Response $response, $args) {
             try {
                 $this->db->beginTransaction();
 
-                $stmt = $this->db->query('SELECT MAX(cislo_fakt) as max_cislo FROM faktury');
-                $result = $stmt->fetch();
-                $lastId = $result['max_cislo'];
-                $newId = $lastId + 1;
 
                 $dph = $formData['suma'] * 0.2;
                 $bez_dph = $formData['suma'] - $dph;
                 $rozdiel = $formData['suma'] - $formData['vyplatene'];
 
-                $stmt = $this->db->prepare('INSERT INTO faktury (cislo_fakt, nazov_fakt, datum_splatnosti, datum_evidencie, suma, bez_dph, dph, vyplatene, rozdiel, datum_dodania, poznamka, dodavateliaid_dod)
-                                      VALUES (:cislo_fakt, :nazov_fakt, :datum_splatnosti, :datum_evidencie, :suma, :bez_dph, :dph, :vyplatene, :rozdiel, :datum_dodania, :poznamka, :dodavateliaid_dod');
-                $stmt->bindValue(':cislo_fakt', $newId);
+                $stmt = $this->db->prepare('INSERT INTO faktury (nazov_fakt, datum_splatnosti, datum_evidencie, suma, bez_dph, dph, vyplatene, rozdiel, datum_dodania, poznamka, dodavateliaid_dod)
+                                      VALUES (:nazov_fakt, :datum_splatnosti, :datum_evidencie, :suma, :bez_dph, :dph, :vyplatene, :rozdiel, :datum_dodania, :poznamka, :dodavateliaid_dod)');
                 $stmt->bindValue(':nazov_fakt', $formData['nazov_fakt']);
                 $stmt->bindValue(':datum_splatnosti', $formData['datum_splatnosti']);
                 $stmt->bindValue(':datum_evidencie', $formData['datum_evidencie']);
@@ -581,6 +581,7 @@ $app->get('/zakaznici', function (Request $request, Response $response, $args) {
             } catch (PDOexception $e) {
                 $tplVars['message'] = 'Error occured :(';
                 $tplVars['formData'] = $formData;
+                echo var_dump($e->getMessage());
                 $this->logger->error($e->getMessage());
                 $this->db->rollback();
             }
@@ -698,9 +699,10 @@ $app->get('/zakaznici', function (Request $request, Response $response, $args) {
             'prijate' => '',
             'dodavatelianazov_dod' => ''
         ];
-        $stmt = $this->db->query('SELECT d.id_dod, d.nazov FROM dodavatelia d ORDER BY d.nazov');
+        $stmt = $this->db->query('SELECT d.id_dod, d.nazov FROM dodavatelia d ORDER BY nazov ASC');
         $dodavatelia_list = $stmt->fetchAll();
         $tplVars['dodavatelia_list'] = $dodavatelia_list;
+
 
         return $this->view->render($response, 'objednavka-formular.latte', $tplVars);
     })->setName('novaObjednavka');
@@ -709,34 +711,11 @@ $app->get('/zakaznici', function (Request $request, Response $response, $args) {
     $app->post('/objednavka', function (Request $request, Response $response, $args) {
         $formData = $request->getParsedBody();
         $tplVars = [];
-        if (
-            empty($formData['pocet_kusov']) ||
-            empty($formData['pocet_artiklov']) ||
-            empty($formData['suma']) ||
-            empty($formData['datum_vystavenia']) ||
-            empty($formData['popis']) ||
-            empty($formData['zaplatene']) ||
-            empty($formData['prijate']) ||
-            empty($formData['dodavatelianazov_dod'])) {
-            $tplVars['message'] = 'Please fill required fields';
-        } else {
             try {
                 $this->db->beginTransaction();
 
-                $stmt = $this->db->query('SELECT MAX(cislo_id) as max_cislo FROM objednavky');
-                $result = $stmt->fetch();
-                $lastId = $result['max_cislo'];
-                $newId = $lastId + 1;
-
-                $stmt = $this->db->prepare('SELECT id_dod FROM dodavatelia WHERE nazov = :nazov');
-                $stmt->bindValue(':nazov', $formData['dodavatelianazov_dod']);
-                $stmt->execute();
-                $result = $stmt->fetch();
-                $dodavatelId = $result['id_dod'];
-
-                $stmt = $this->db->prepare('INSERT INTO objednavky (cislo_id, pocet_kusov, pocet_artiklov, suma, datum_vystavenia, popis, zaplatene, prijate, dodavatelianazov_dod)
-                                      VALUES (:cislo_id, :pocet_kusov, :pocet_artiklov, :suma, :datum_vystavenia, :popis, :zaplatene, :prijate, :dodavatelianazov_dod)');
-                $stmt->bindValue(':cislo_id', $newId);
+                $stmt = $this->db->prepare('INSERT INTO objednavky (pocet_kusov, pocet_artiklov, suma, datum_vystavenia, popis, zaplatene, prijate, dodavatelianazov_dod)
+                                            VALUES (:pocet_kusov, :pocet_artiklov, :suma, :datum_vystavenia, :popis, :zaplatene, :prijate, :dodavatelianazov_dod)');
                 $stmt->bindValue(':pocet_kusov', $formData['pocet_kusov']);
                 $stmt->bindValue(':pocet_artiklov', $formData['pocet_artiklov']);
                 $stmt->bindValue(':suma', $formData['suma']);
@@ -753,10 +732,10 @@ $app->get('/zakaznici', function (Request $request, Response $response, $args) {
             } catch (PDOexception $e) {
                 $tplVars['message'] = 'Error occured :(';
                 $tplVars['formData'] = $formData;
+                echo var_dump($e->getMessage());
                 $this->logger->error($e->getMessage());
                 $this->db->rollback();
             }
-        }
         return $this->view->render($response, 'objednavka-formular.latte', $tplVars);
     });
 

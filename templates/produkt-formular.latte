@@ -58,8 +58,8 @@
             </div>
             <!-- Dodavatel -->
             <div class="col-sm-3 form-group">
-               <label for="dodavateliaid_dod">Názov dodávateľa</label>
-               <select name="dodavateliaid_dod" id="dodavateliaid_dod" class="form-control">
+               <label for="dodavatel">Názov dodávateľa</label>
+               <select name="dodavatel" id="dodavatel" class="form-control">
                   <option value="disabled selected">Vyberte dodávateľa</option>
                   {foreach $dodavatelia_list as $d}
                   <option value="{$d['id_dod']}">{$d['nazov']}</option>
@@ -83,13 +83,22 @@
             <label>EAN</label>
             <input class="form-control" type="number" name="ean" placeholder="EAN" required value="{$formData['ean']}">
          </div>
-         <div class="col-sm-3 form-group">
+         <div class="col-sm-1 form-group">
          <label>Predajňa</label>
          <select class="form-control" type="text" name="predajnecislo_predajne"required>
             <option value="1" {if $formData['predajnecislo_predajne'] == '1'}selected{/if}>1</option>
             <option value="2" {if $formData['predajnecislo_predajne'] == '2'}selected{/if}>2</option>
             <option value="3" {if $formData['predajnecislo_predajne'] == '3'}selected{/if}>3</option>
          </select>
+         </div>
+         <div class="col-sm-2 form-group">
+            <label for="objednavkycislo_obj">Objednávka</label>
+            <select name="objednavkycislo_obj" id="objednavkycislo_obj" class="form-control">
+               <option value="disabled selected">Vyber objednávku</option>
+               {foreach $objednavky_list as $d}
+               <option value="{$d['cislo_id']}">{$d['cislo_id']}</option>
+               {/foreach}
+            </select>
          </div>
       </div>
 
